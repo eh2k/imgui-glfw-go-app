@@ -1,7 +1,7 @@
 package app
 
 import (
-	"./imgui-go"
+	"github.com/eh2k/imgui-glfw-go-app/imgui-go" //"./imgui-go"
 	"bytes"
 	"errors"
 	"fmt"
