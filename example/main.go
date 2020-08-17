@@ -10,10 +10,10 @@ import (
 	"path/filepath"
 	"runtime"
 	"time"
-	"github.com/eh2k/imgui-go"
 	"github.com/eh2k/osdialog-go"
 	"github.com/go-gl/glfw/v3.3/glfw"
-	".."
+	app ".."
+	imgui "../imgui-go"
 )
 
 func init() {
@@ -33,7 +33,9 @@ func loop(displaySize imgui.Vec2) {
 	var saveFileDialog = false
 	var showAboutWindow = false
 
-	if app.ImguiToolbarBegin() {
+	imgui.ShowUserGuide()
+
+	if app.ImguiToolbarsBegin() {
 
 		app.ImguiToolbar("File", 130, func() {
 
@@ -41,7 +43,7 @@ func loop(displaySize imgui.Vec2) {
 				openFileDialog = true
 			}
 
-			imgui.SetCursorPos(imgui.Vec2{X: 70, Y: 25})
+			imgui.SameLine()
 
 			if imgui.Button("Save..") {
 				saveFileDialog = true
@@ -64,15 +66,10 @@ func loop(displaySize imgui.Vec2) {
 		})
 	}
 
-		app.ImguiToolbarEnd()
+		app.ImguiToolbarsEnd()
 	}
 
-	if showAboutWindow {
-		showAboutWindow = false
-		imgui.OpenPopup("About")
-	}
-
-	app.ImguiAboutView("imgui-glfw-go-app", "Copyright (C) 2020 by E.Heidt", "https://github.com/eh2k/imgui-glfw-go-app")
+	app.ShowAboutPopup(&showAboutWindow, "imgui-glfw-go-app", "Copyright (C) 2020 by E.Heidt", "https://github.com/eh2k/imgui-glfw-go-app")
 
 	imgui.SetNextWindowPos(imgui.Vec2{X: displaySize.X / 2 - 150.0, Y: displaySize.Y /2 - 20.0})
 	if imgui.BeginPopupModalV("Upload", nil, imgui.WindowFlagsNoResize|imgui.WindowFlagsNoSavedSettings|imgui.WindowFlagsNoTitleBar) {
@@ -135,6 +132,8 @@ func main() {
 
 	window := app.NewAppWindow(1024, 768)
 	defer app.Dispose()
+
+	app.InitMyImguiStyle()
 
 	{
 		io := imgui.CurrentIO()

@@ -1,9 +1,10 @@
 package app
 
 import (
+	"./imgui-go"
 	"bytes"
+	"errors"
 	"fmt"
-	"github.com/eh2k/imgui-go"
 	"github.com/go-gl/gl/v2.1/gl"
 	"github.com/go-gl/glfw/v3.3/glfw"
 	"image"
@@ -14,7 +15,6 @@ import (
 	"os/exec"
 	"runtime"
 	"unsafe"
-	"errors"
 )
 
 func glRenderImgui(displaySize imgui.Vec2, framebufferSize imgui.Vec2, drawData imgui.DrawData) {
@@ -151,7 +151,6 @@ func destroyFontsTexture(fontTexture uint32) {
 	}
 }
 
-
 var (
 	textureMap = make(map[string]uint32)
 )
@@ -222,8 +221,7 @@ func GetTexture(any interface{}) imgui.TextureID {
 	return imgui.TextureID(newTexture)
 }
 
-/*
-func InitImguiStyle() {
+func InitMyImguiStyle() {
 
 	//https://github.com/inkyblackness/hacked/blob/b8ec8e13df6f9dc4a416d4b375139e78d8120035/editor/Application.go
 
@@ -279,7 +277,6 @@ func InitImguiStyle() {
 	//style.SetColor(imgui.StyleColorNavWindowingDimBg,      imgui.Vec4{0.20, 0.20, 0.20, 0.20})
 	//style.SetColor(imgui.StyleColorModalWindowDimBg,       imgui.Vec4{0.20, 0.20, 0.20, 0.35})
 }
-*/
 
 func OpenUrl(url string) {
 	cmd := ""
@@ -318,9 +315,14 @@ func ImguiHyperLink(name string, url string) {
 	}
 }
 
-func ImguiAboutView(header string, copyright string, project_url string) {
+func ShowAboutPopup(openPopup *bool, header string, copyright string, project_url string) {
 
-	imgui.SetNextWindowSize(imgui.Vec2{X: float32(400), Y: float32(200)})
+	if *openPopup {
+		*openPopup = false
+		imgui.OpenPopup("About")
+	}
+
+	imgui.SetNextWindowSize(imgui.Vec2{X: float32(400), Y: float32(230)})
 	if imgui.BeginPopupModalV("About", nil, imgui.WindowFlagsNoResize|imgui.WindowFlagsNoSavedSettings) {
 		imgui.Spacing()
 		imgui.Spacing()
@@ -332,12 +334,17 @@ func ImguiAboutView(header string, copyright string, project_url string) {
 		imgui.Spacing()
 		imgui.Text(copyright)
 		ImguiHyperLink(project_url, project_url)
-		// imgui.Spacing()
-		// imgui.Spacing()
-		// imgui.Separator()
-		// imgui.Text("OpenGL " + gl.GoStr(gl.GetString(gl.VERSION)))
-		// imgui.Separator()
-
+		imgui.Spacing()
+		imgui.Spacing()
+		imgui.Spacing()
+		imgui.Spacing()
+		imgui.Separator()
+		imgui.PushStyleColor(imgui.StyleColorText, imgui.Vec4{X: 0.5, Y: 0.5, Z: 0.5, W: 1})
+		imgui.Text("OpenGL Version: " + gl.GoStr(gl.GetString(gl.VERSION)))
+		imgui.Text("ImGui Version: " + imgui.Version())
+		imgui.Text("GOOS/GOARCH: " + runtime.GOOS + "/" + runtime.GOARCH)
+		//imgui.Separator()
+		imgui.PopStyleColor()
 		imgui.SetCursorPos(imgui.WindowSize().Minus(imgui.Vec2{X: float32(40), Y: float32(38)}))
 		imgui.Separator()
 		imgui.SetCursorPos(imgui.WindowSize().Minus(imgui.Vec2{X: float32(40), Y: float32(28)}))
@@ -348,32 +355,40 @@ func ImguiAboutView(header string, copyright string, project_url string) {
 	}
 }
 
-var toolBarOffsetX float32 = 0
-
-func ImguiToolbarBegin() bool {
-	return true
+func ImguiToolbarsBegin() bool {
+	imgui.SetNextWindowPos(imgui.Vec2{X: 0, Y: 0})
+	if imgui.BeginV("toolbars", nil, 
+		imgui.WindowFlagsNoScrollbar|imgui.WindowFlagsNoTitleBar|imgui.WindowFlagsNoResize|imgui.WindowFlagsNoBackground|imgui.WindowFlagsNoSavedSettings){
+			imgui.PushStyleColor(imgui.StyleColorText, imgui.Vec4{X: 1, Y: 1, Z: 1, W: 0.8})
+			return true
+	} else {
+		return false
+	}
 }
-func ImguiToolbarEnd() {
-	toolBarOffsetX = 0
+func ImguiToolbarsEnd() {
+	imgui.PopStyleColor()
+	imgui.End()
 }
 func ImguiToolbar(header string, width float32, imguiContent func()) {
-	imgui.SetNextWindowPos(imgui.Vec2{X: toolBarOffsetX, Y: 2})
-	imgui.SetNextWindowSize(imgui.Vec2{X: float32(width), Y: 55})
-	toolBarOffsetX += width - 6
-	if imgui.BeginV(header+fmt.Sprint(toolBarOffsetX), nil, imgui.WindowFlagsNoScrollbar|imgui.WindowFlagsNoTitleBar|imgui.WindowFlagsNoResize|imgui.WindowFlagsNoBackground|imgui.WindowFlagsNoSavedSettings) {
+	imgui.SetCursorPos(imgui.CursorPos().Minus(imgui.Vec2{X: 4, Y: 0}))
+	if imgui.BeginChildV(header, imgui.Vec2{X: width, Y: 55}, false, 0) {		
+		imgui.SetCursorPos(imgui.Vec2{X: 8, Y: 8})
 		imgui.Text(header)
 		imgui.SetCursorPos(imgui.Vec2{X: 8, Y: 25})
-		imgui.PushItemWidth(imgui.WindowSize().X - 16)
+		imgui.PushItemWidth(width - 16)
 		imgui.WindowDrawList().AddRectFilled(imgui.WindowPos(), imgui.WindowPos().Plus(imgui.WindowSize()), imgui.PackedColor(0x22ffffff))
 		imguiContent()
-		imgui.End()
+		imgui.EndChild()
+		
 	}
+
+	imgui.SameLine()
 }
 
 var (
 	imguic      *imgui.Context
 	fontTexture uint32
-	mainWindow  *glfw.Window 
+	mainWindow  *glfw.Window
 )
 
 func NewAppWindow(width int, height int) *glfw.Window {
@@ -413,7 +428,7 @@ func NewAppWindow(width int, height int) *glfw.Window {
 
 	fontTexture = createFontsTexture(io)
 
-    mainWindow = window
+	mainWindow = window
 	return window
 }
 
