@@ -356,31 +356,33 @@ func ShowAboutPopup(openPopup *bool, header string, copyright string, project_ur
 }
 
 func ImguiToolbarsBegin() bool {
-	imgui.SetNextWindowPos(imgui.Vec2{X: 0, Y: 0})
+	imgui.SetNextWindowPos(imgui.Vec2{X: -4, Y: -4})
 	if imgui.BeginV("toolbars", nil, 
 		imgui.WindowFlagsNoScrollbar|imgui.WindowFlagsNoTitleBar|imgui.WindowFlagsNoResize|imgui.WindowFlagsNoBackground|imgui.WindowFlagsNoSavedSettings){
 			imgui.PushStyleColor(imgui.StyleColorText, imgui.Vec4{X: 1, Y: 1, Z: 1, W: 0.8})
+			imgui.PushStyleVarVec2(imgui.StyleVarItemSpacing, imgui.Vec2{X: 4, Y: 4})
 			return true
 	} else {
 		return false
 	}
 }
 func ImguiToolbarsEnd() {
+	imgui.PopStyleVar()
 	imgui.PopStyleColor()
 	imgui.End()
 }
 func ImguiToolbar(header string, width float32, imguiContent func()) {
-	imgui.SetCursorPos(imgui.CursorPos().Minus(imgui.Vec2{X: 4, Y: 0}))
-	if imgui.BeginChildV(header, imgui.Vec2{X: width, Y: 55}, false, 0) {		
-		imgui.SetCursorPos(imgui.Vec2{X: 8, Y: 8})
+	//imgui.SetCursorPos(imgui.CursorPos().Minus(imgui.Vec2{X: 4, Y: 0}))
+	if imgui.BeginChildV("toolbar_" + header, imgui.Vec2{X: width, Y: 48}, false, 0) {		
+		imgui.SetCursorPos(imgui.Vec2{X: 4, Y: 4})
 		imgui.Text(header)
-		imgui.SetCursorPos(imgui.Vec2{X: 8, Y: 25})
-		imgui.PushItemWidth(width - 16)
+		imgui.SetCursorPos(imgui.Vec2{X: 4, Y: 20})
+		imgui.PushItemWidth(width - 8)
 		imgui.WindowDrawList().AddRectFilled(imgui.WindowPos(), imgui.WindowPos().Plus(imgui.WindowSize()), imgui.PackedColor(0x22ffffff))
 		imguiContent()
-		imgui.EndChild()
-		
 	}
+	
+	imgui.EndChild()
 
 	imgui.SameLine()
 }
