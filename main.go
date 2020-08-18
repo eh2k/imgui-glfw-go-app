@@ -13,7 +13,9 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"runtime"
+	"strings"
 	"unsafe"
 )
 
@@ -399,12 +401,17 @@ func NewAppWindow(width int, height int) *glfw.Window {
 		log.Fatal(errors.New("only one window supported"))
 	}
 
-	err := glfw.Init()
+	exePath, err := os.Executable()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	window, err := glfw.CreateWindow(width, height, "uwedit", nil, nil)
+	err = glfw.Init()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	window, err := glfw.CreateWindow(width, height, strings.Title(strings.Split(filepath.Base(exePath), ".")[0]), nil, nil)
 	if err != nil {
 		log.Fatal(err)
 	}

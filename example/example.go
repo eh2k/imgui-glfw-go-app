@@ -12,8 +12,8 @@ import (
 	"time"
 	"github.com/eh2k/osdialog-go"
 	"github.com/go-gl/glfw/v3.3/glfw"
-	app ".."
-	imgui "../imgui-go"
+	"github.com/eh2k/imgui-glfw-go-app"
+	"github.com/eh2k/imgui-glfw-go-app/imgui-go"
 )
 
 func init() {
