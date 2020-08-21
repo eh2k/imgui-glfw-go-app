@@ -71,7 +71,7 @@ func loop(displaySize imgui.Vec2) {
 		app.ImguiToolbarsEnd()
 	}
 
-	app.ShowAboutPopup(&showAboutWindow, "imgui-glfw-go-app", "1.0", "Copyright (C) 2020 by E.Heidt", "https://github.com/eh2k/teapot-viewer")
+	app.ShowAboutPopup(&showAboutWindow, "imgui-glfw-go-app", "1.0", "Copyright (C) 2020 by E.Heidt", "https://github.com/eh2k/imgui-glfw-go-app")
 
 	imgui.SetNextWindowPos(imgui.Vec2{X: displaySize.X / 2 - 150.0, Y: displaySize.Y /2 - 20.0})
 	if imgui.BeginPopupModalV("Upload", nil, imgui.WindowFlagsNoResize|imgui.WindowFlagsNoSavedSettings|imgui.WindowFlagsNoTitleBar) {
