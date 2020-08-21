@@ -225,7 +225,7 @@ func ShowUpdatePopup(version string, projectUrl string) {
 					_openUpdatePopup = 1
 
 					for _, e := range versions[0].Assets {
-						if !strings.HasSuffix(e.BrowserDownloadUrl, runtime.GOOS+".zip") {
+						if strings.HasSuffix(e.BrowserDownloadUrl, runtime.GOOS+".zip") {
 							_latestDownload = e.BrowserDownloadUrl
 						}
 					}
