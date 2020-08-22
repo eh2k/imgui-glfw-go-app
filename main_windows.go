@@ -32,8 +32,8 @@ void SetWindowIcon(HWND hwnd, int resourceId)
 import "C"
 
 import (
-	"unsafe"
 	"github.com/go-gl/glfw/v3.3/glfw"
+	"unsafe"
 )
 
 func SetWindowIcon(window *glfw.Window) {

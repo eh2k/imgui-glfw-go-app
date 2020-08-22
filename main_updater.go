@@ -214,7 +214,7 @@ func ShowUpdatePopup(version string, projectUrl string) {
 
 			//fmt.Println(versions)
 
-			if versions != nil && len(versions) > 0 && versions[0].TagName != version  {
+			if versions != nil && len(versions) > 0 && versions[0].TagName != version {
 
 				latestVersion := versions[0].HtmlUrl
 
