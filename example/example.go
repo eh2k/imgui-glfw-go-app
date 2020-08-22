@@ -4,16 +4,16 @@ package main
 
 import (
 	"fmt"
+	"github.com/eh2k/imgui-glfw-go-app"
+	"github.com/eh2k/imgui-glfw-go-app/imgui-go"
+	"github.com/eh2k/osdialog-go"
+	"github.com/go-gl/glfw/v3.3/glfw"
 	"log"
 	"math"
 	"os"
 	"path/filepath"
 	"runtime"
 	"time"
-	"github.com/eh2k/osdialog-go"
-	"github.com/go-gl/glfw/v3.3/glfw"
-	"github.com/eh2k/imgui-glfw-go-app"
-	"github.com/eh2k/imgui-glfw-go-app/imgui-go"
 	//".."
 	//"../imgui-go"
 )
@@ -25,7 +25,7 @@ func init() {
 }
 
 var (
-	loadProgress = float32(0)
+	loadProgress   = float32(0)
 	showDemoWindow = true
 )
 
@@ -60,20 +60,20 @@ func loop(displaySize imgui.Vec2) {
 		})
 
 		if !showDemoWindow {
-		app.ImguiToolbar("Imgui", 54, func() {
+			app.ImguiToolbar("Imgui", 54, func() {
 
-			if imgui.Button("Demo") {
-				showDemoWindow = true
-			}
-		})
-	}
+				if imgui.Button("Demo") {
+					showDemoWindow = true
+				}
+			})
+		}
 
 		app.ImguiToolbarsEnd()
 	}
 
 	app.ShowAboutPopup(&showAboutWindow, "imgui-glfw-go-app", "1.0", "Copyright (C) 2020 by E.Heidt", "https://github.com/eh2k/imgui-glfw-go-app")
 
-	imgui.SetNextWindowPos(imgui.Vec2{X: displaySize.X / 2 - 150.0, Y: displaySize.Y /2 - 20.0})
+	imgui.SetNextWindowPos(imgui.Vec2{X: displaySize.X/2 - 150.0, Y: displaySize.Y/2 - 20.0})
 	if imgui.BeginPopupModalV("Upload", nil, imgui.WindowFlagsNoResize|imgui.WindowFlagsNoSavedSettings|imgui.WindowFlagsNoTitleBar) {
 		imgui.Text("uploading...")
 		imgui.ProgressBarV(loadProgress, imgui.Vec2{X: 300, Y: 22}, "")
@@ -92,11 +92,11 @@ func loop(displaySize imgui.Vec2) {
 	if openFileDialog {
 		openFileDialog = false
 		filename, err := osdialog.ShowOpenFileDialog(".", "", "Files:*")
-		if err == nil 	{
+		if err == nil {
 			imgui.OpenPopup("Upload")
-	
+
 			go func() {
-	
+
 				loadProgress = 0
 				time.Sleep(0)
 				for j := 0; j < 10; j++ {
@@ -194,7 +194,7 @@ func main() {
 		})
 	}
 
-	app.Run(loop);
+	app.Run(loop)
 
 	fmt.Println("END")
 }
